@@ -1,0 +1,37 @@
+package demoExpertSystem;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
+public class ExpertSystemManager {
+	
+	private ArrayList<Fact> database;
+	private ArrayList<Rule> knowledgeBase;
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+		
+		
+	}
+
+	// create a list of facts with their 'allowed values'
+	// all string values are lower case!!!!!!!!!!
+	private void populateDatabase(){
+		
+		Fact newF;
+		
+		// unfinished...........
+		newF = new Fact("environment", new ArrayList<String>(Arrays.asList("papers", "manuals")));
+		database.add(newF);
+		
+		
+	}
+	
+	// create a list of rules, all with antecedents, consequents and logic types
+	private void populateKnowledgeBase(){
+		
+		//todo
+	}
+	
+}

@@ -1,0 +1,19 @@
+package demoExpertSystem;
+
+import java.util.ArrayList;
+
+public class Database<E> extends ArrayList<DatabaseFact> {
+	
+	private static ArrayList<DatabaseFact> database = new ArrayList<DatabaseFact>();
+
+	// constructor must fill database with DatabaseFacts
+	public Database(){
+		super();
+		
+	}
+	
+	/*public DatabaseFact get(int index){
+		
+		return database.get(index);
+	}*/
+}

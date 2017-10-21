@@ -1,0 +1,75 @@
+package demoExpertSystem;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class ExpertSystemManager {
+	
+	private static ArrayList<Fact> database;
+	private static ArrayList<Rule> knowledgeBase;
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+		populateDatabase();
+		
+		//test Fact
+		System.out.println("fact name = " + database.get(0).getName());
+		System.out.println("fact known? = " + database.get(0).isKnown());
+		
+		Scanner inScan = new Scanner(System.in);
+		
+		
+		
+		while(true) {
+			
+			System.out.print("What is the value of \"" + database.get(0).getName() + " ");
+			String newFactVal = inScan.nextLine();
+			System.out.println("Value entered is: " + newFactVal);
+			
+			if (database.get(0).setValue(newFactVal))
+				System.out.println("Success! value of " + database.get(0).getName() + " set to: " + database.get(0).getValue());
+			
+			else 
+				System.out.println("Error! invalid value entered.");
+		}
+		
+		
+		
+		
+	}
+
+	// create a list of facts with their 'allowed values'
+	// all string values are lower case!!!!!!!!!!
+	private static void populateDatabase(){
+		
+		Fact newF;
+		
+		
+		newF = new Fact("environment", new ArrayList<String>(Arrays.asList("papers"
+																			,"manuals", 
+																			"documents",
+																			"textbooks", 
+																			"pictures", 
+																			"illustrations", 
+																			"photographs", 
+																			"diagrams", 
+																			"machines", 
+																			"buildings",
+																			"tools",
+																			"numbers",
+																			"formulas",
+																			"computer programs")));
+		database.add(newF);
+		
+		
+	}
+	
+	// create a list of rules, all with antecedents, consequents and logic types
+	private static void populateKnowledgeBase(){
+		
+		//todo
+	}
+	
+}

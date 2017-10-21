@@ -1,0 +1,48 @@
+package bayesianExpertSystem;
+
+import java.util.ArrayList;
+
+public class BayesianExpertSystemManager {
+	
+	private static ArrayList<DatabaseFact> database = new ArrayList<DatabaseFact>();
+	private static ArrayList<Rule> knowledgeBase = new ArrayList<Rule>();
+	
+	private static int NO_QUESTIONS = 3;
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		
+		
+		// fill facts and rules
+		FactFiller f = new FactFiller();
+		RuleFiller kb = new RuleFiller();
+
+		database = f.getFacts();
+		knowledgeBase = kb.getKnowledgeBase();
+		
+		
+	}
+	
+	
+	private static String qAndA(int questionIndex, int factDatabaseIndex){
+		
+		//escape sequence if no question matches index
+		if (questionIndex >= NO_QUESTIONS)
+			return "Q";
+		
+		String qText;
+		
+		switch (questionIndex){
+			case 0: qText = "";
+					break;
+			case 1: qText = "";
+					break;
+			case 2: qText = "";
+					break;
+					
+			default: return "Q";
+		}
+		
+	}
+
+}

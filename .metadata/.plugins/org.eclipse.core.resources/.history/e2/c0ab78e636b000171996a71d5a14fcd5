@@ -1,0 +1,147 @@
+package demoExpertSystem;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class ExpertSystemManager {
+	
+	private static ArrayList<DatabaseFact> database = new ArrayList<DatabaseFact>();
+	private static ArrayList<Rule> knowledgeBase = new ArrayList<Rule>();
+
+	public static void main(String[] args) {
+
+		FactFiller f = new FactFiller();
+		database = f.getFacts();
+		
+		RuleFiller kb = new RuleFiller();
+		knowledgeBase = kb.getKnowledgeBase();
+		
+		
+		//getUserInput();
+		
+		while (true)
+			getTargetFact();
+		
+		//testFacts();
+		
+		
+	}
+	
+	// asks user questions about certain facts and places the answer in database using qAndA()
+	//extn : evaluate rules as facts are updated and print?? depends on evaluation system
+	private static void getUserInput() {
+		
+		while (!qAndA("What sort of environment is a trainee dealing with on the job?", "environment"))
+			System.out.println("Invalid answer - please try again");
+		
+		while (!qAndA("In what way is a trainee expected to act or respond on the job?", "job"))
+			System.out.println("Invalid answer - please try again");
+		
+		while(!qAndA("Is feedback on the trainee's progress required during training?", "feedback"))
+			System.out.println("Invalid answer - please try again");
+			
+	}
+	
+	private static String getTargetFact(){
+		
+		Scanner inScan = new Scanner(System.in);
+		String inString;
+		
+		System.out.println("Which fact do you seek?\n");
+		inString = inScan.nextLine();
+		
+		while (findFactIndex(inString) == -1){
+			
+			System.out.println("Invalid fact name - please try again.");
+			System.out.println("Which fact do you seek?\n");
+			inString = inScan.nextLine();
+		}
+		
+		
+		return inString;
+	}
+	
+	// asks a question using the given question text
+	//gets string response from user
+	//creates conditional fact with name and value (and automatic positive relationship)
+	//finds fact in database with same name
+	//updates that fact
+	// returns true when fact is updated
+	private static boolean qAndA(String questionText, String factName){
+		
+		Scanner inScan = new Scanner(System.in);
+		
+		System.out.println(questionText);
+		String answer = inScan.nextLine();
+		
+		//create new temp fact
+		ConditionalFact cf = new ConditionalFact(factName, answer, true);
+		
+		//find corresponding database fact
+		int index = findFactIndex(factName);
+		
+		// update fact and return true if it is successful, false otherwise
+		return database.get(index).updateFactWith(cf);
+		
+	}
+	
+	// given a string which should be the name of a fact in the database
+	// searches through database to find index of the fact with given name
+	// returns index found
+	// returns -1 if not found
+	private static int findFactIndex(String factNameToSearch) {
+		
+		for (int i = 0; i < database.size(); i++){
+			
+			if(database.get(i).getName().equals(factNameToSearch))
+				return i;
+		}
+		
+		//if match not found, return -1
+		return -1;
+	}
+	private static void testFindFactIndex(String testString){
+		
+		System.out.println("index of " + testString + " is " + findFactIndex(testString));
+	}
+	
+	private static void printFact(int index){
+		
+		System.out.println("fact name = " + database.get(index).getName());
+		System.out.println("fact known? = " + database.get(index).isKnown());
+		
+		if (database.get(index).isKnown())
+			System.out.println("value = " + database.get(index).getValue());
+		
+		System.out.println("");
+		
+		//Scanner inScan = new Scanner(System.in);
+		
+		
+		
+		/*while(true) {
+			
+			System.out.print("\nWhat is the value of \"" + database.get(index).getName() + "\" ");
+			String newFactVal = inScan.nextLine();
+			System.out.println("Value entered is: " + newFactVal);
+			
+			if (database.get(index).setValue(newFactVal))
+				System.out.println("Success! value of " + database.get(index).getName() + " set to: " + database.get(index).getValue());
+			
+			else 
+				System.out.println("Error! invalid value entered.");
+		}*/
+	}
+	
+	private static void testFacts(){
+		
+		for (int i = 0; i < database.size(); i++) {
+			
+			printFact(i);
+		}
+	}
+
+}
+
+

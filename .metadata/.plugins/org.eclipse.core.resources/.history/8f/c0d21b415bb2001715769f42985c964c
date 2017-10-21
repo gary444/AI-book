@@ -1,0 +1,5 @@
+package bayesianExpertSystem;
+
+public class TargetFact extends Fact {
+
+}

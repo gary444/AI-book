@@ -1,0 +1,9 @@
+package bayesianExpertSystem;
+
+public class TargetFactFiller {
+
+	public TargetFactFiller() {
+		// TODO Auto-generated constructor stub
+	}
+
+}

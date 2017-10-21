@@ -1,0 +1,9 @@
+package bayesianExpertSystem;
+
+public class FactHypothesis {
+
+	private String name;
+	private double probability;
+	
+	public FactHypothesis(Strinf)
+}

@@ -1,0 +1,274 @@
+package demoExpertSystem;
+
+import java.util.ArrayList;
+
+public class RuleFiller {
+	
+	private static ArrayList<Rule> knowledgeBase = new ArrayList<Rule>();
+
+	public RuleFiller(){
+		populateKnowledgeBase();
+	}
+	
+	// create a list of rules, all with antecedents, consequents and logic types
+	private static void populateKnowledgeBase(){
+		
+		Rule newR;
+		
+		
+		// RULE 1
+		// create consequent list
+		ArrayList<ConditionalFact> consequents = new ArrayList<ConditionalFact>();
+		ConditionalFact cf = new ConditionalFact("environment", "papers", true);
+		consequents.add(cf);
+		cf = new ConditionalFact("environment", "manuals", true);
+		consequents.add(cf);
+		cf = new ConditionalFact("environment", "documents", true);
+		consequents.add(cf);
+		cf = new ConditionalFact("environment", "textbooks", true);
+		consequents.add(cf);
+		
+		//create antecedent
+		ConditionalFact antecedent = new ConditionalFact("stimulus_situation", "verbal", true);
+		
+		newR = new Rule(consequents, antecedent, "OR");
+		
+		knowledgeBase.add(newR);
+		
+		// RULE 2
+		// create consequent list
+		consequents.clear();
+		cf = new ConditionalFact("environment", "pictures", true);
+		consequents.add(cf);
+		cf = new ConditionalFact("environment", "illustrations", true);
+		consequents.add(cf);
+		cf = new ConditionalFact("environment", "photographs", true);
+		consequents.add(cf);
+		cf = new ConditionalFact("environment", "diagrams", true);
+		consequents.add(cf);
+		
+		//create antecedent
+		antecedent = new ConditionalFact("stimulus_situation", "visual", true);
+		
+		newR = new Rule(consequents, antecedent, "OR");
+		
+		knowledgeBase.add(newR);
+		
+		// RULE 3
+		// create consequent list
+		consequents.clear();
+		cf = new ConditionalFact("environment", "machines", true);
+		consequents.add(cf);
+		cf = new ConditionalFact("environment", "buildings", true);
+		consequents.add(cf);
+		cf = new ConditionalFact("environment", "tools", true);
+		consequents.add(cf);
+		
+		//create antecedent
+		antecedent = new ConditionalFact("stimulus_situation", "physical object", true);
+		
+		newR = new Rule(consequents, antecedent, "OR");
+		
+		knowledgeBase.add(newR);
+		
+		// RULE 4
+		// create consequent list
+		consequents.clear();
+		cf = new ConditionalFact("environment", "numbers", true);
+		consequents.add(cf);
+		cf = new ConditionalFact("environment", "formulas", true);
+		consequents.add(cf);
+		cf = new ConditionalFact("environment", "computer programs", true);
+		consequents.add(cf);
+		
+		//create antecedent
+		antecedent = new ConditionalFact("stimulus_situation", "symbolic", true);
+		
+		newR = new Rule(consequents, antecedent, "OR");
+		
+		knowledgeBase.add(newR);
+		
+		// RULE 5
+		// create consequent list
+		consequents.clear();
+		cf = new ConditionalFact("job", "lecturing", true);
+		consequents.add(cf);
+		cf = new ConditionalFact("job", "advising", true);
+		consequents.add(cf);
+		cf = new ConditionalFact("job", "counselling", true);
+		consequents.add(cf);
+		
+		//create antecedent
+		antecedent = new ConditionalFact("stimulus_response", "oral", true);
+		
+		newR = new Rule(consequents, antecedent, "OR");
+		
+		knowledgeBase.add(newR);
+		
+		// RULE 6
+		// create consequent list
+		consequents.clear();
+		cf = new ConditionalFact("job", "building", true);
+		consequents.add(cf);
+		cf = new ConditionalFact("job", "repairing", true);
+		consequents.add(cf);
+		cf = new ConditionalFact("job", "troubleshooting", true);
+		consequents.add(cf);
+		
+		//create antecedent
+		antecedent = new ConditionalFact("stimulus_response", "hands-on", true);
+		
+		newR = new Rule(consequents, antecedent, "OR");
+		
+		knowledgeBase.add(newR);
+		
+		// RULE 7
+		// create consequent list
+		consequents.clear();
+		cf = new ConditionalFact("job", "writing", true);
+		consequents.add(cf);
+		cf = new ConditionalFact("job", "typing", true);
+		consequents.add(cf);
+		cf = new ConditionalFact("job", "drawing", true);
+		consequents.add(cf);
+		
+		//create antecedent
+		antecedent = new ConditionalFact("stimulus_response", "documented", true);
+		
+		newR = new Rule(consequents, antecedent, "OR");
+		
+		knowledgeBase.add(newR);
+		
+		// RULE 8
+		// create consequent list
+		consequents.clear();
+		cf = new ConditionalFact("job", "evaluating", true);
+		consequents.add(cf);
+		cf = new ConditionalFact("job", "reasoning", true);
+		consequents.add(cf);
+		cf = new ConditionalFact("job", "investigating", true);
+		consequents.add(cf);
+		
+		//create antecedent
+		antecedent = new ConditionalFact("stimulus_response", "analytical", true);
+		
+		newR = new Rule(consequents, antecedent, "OR");
+		
+		knowledgeBase.add(newR);
+		
+		// RULE 9
+		// create consequent list
+		consequents.clear();
+		cf = new ConditionalFact("stimulus_situation", "physical object", true);
+		consequents.add(cf);
+		cf = new ConditionalFact("stimulus_response", "hands-on", true);
+		consequents.add(cf);
+		cf = new ConditionalFact("feedback", "required", true);
+		consequents.add(cf);
+		
+		//create antecedent
+		antecedent = new ConditionalFact("medium", "workshop", true);
+		
+		newR = new Rule(consequents, antecedent, "AND");
+		
+		knowledgeBase.add(newR);
+		
+		// RULE 10
+		// create consequent list
+		consequents.clear();
+		cf = new ConditionalFact("stimulus_situation", "symbolic", true);
+		consequents.add(cf);
+		cf = new ConditionalFact("stimulus_response", "analytical", true);
+		consequents.add(cf);
+		cf = new ConditionalFact("feedback", "required", true);
+		consequents.add(cf);
+		
+		//create antecedent
+		antecedent = new ConditionalFact("medium", "lecture - tutorial", true);
+		
+		newR = new Rule(consequents, antecedent, "AND");
+		
+		knowledgeBase.add(newR);
+		
+		// RULE 11
+		// create consequent list
+		consequents.clear();
+		cf = new ConditionalFact("stimulus_situation", "visual", true);
+		consequents.add(cf);
+		cf = new ConditionalFact("stimulus_response", "documented", true);
+		consequents.add(cf);
+		cf = new ConditionalFact("feedback", "not required", true);
+		consequents.add(cf);
+		
+		//create antecedent
+		antecedent = new ConditionalFact("medium", "videocassette", true);
+		
+		newR = new Rule(consequents, antecedent, "AND");
+		
+		knowledgeBase.add(newR);
+		
+		// RULE 12
+		// create consequent list
+		consequents.clear();
+		cf = new ConditionalFact("stimulus_situation", "visual", true);
+		consequents.add(cf);
+		cf = new ConditionalFact("stimulus_response", "oral", true);
+		consequents.add(cf);
+		cf = new ConditionalFact("feedback", "required", true);
+		consequents.add(cf);
+		
+		//create antecedent
+		antecedent = new ConditionalFact("medium", "lecture - tutorial", true);
+		
+		newR = new Rule(consequents, antecedent, "AND");
+		
+		knowledgeBase.add(newR);
+		
+		
+		// RULE 13
+		// create consequent list
+		consequents.clear();
+		cf = new ConditionalFact("stimulus_situation", "verbal", true);
+		consequents.add(cf);
+		cf = new ConditionalFact("stimulus_response", "analytical", true);
+		consequents.add(cf);
+		cf = new ConditionalFact("feedback", "required", true);
+		consequents.add(cf);
+		
+		//create antecedent
+		antecedent = new ConditionalFact("medium", "lecture - tutorial", true);
+		
+		newR = new Rule(consequents, antecedent, "AND");
+		
+		knowledgeBase.add(newR);
+		
+		// RULE 14
+		// create consequent list
+		consequents.clear();
+		cf = new ConditionalFact("stimulus_situation", "verbal", true);
+		consequents.add(cf);
+		cf = new ConditionalFact("stimulus_response", "oral", true);
+		consequents.add(cf);
+		cf = new ConditionalFact("feedback", "required", true);
+		consequents.add(cf);
+		
+		//create antecedent
+		antecedent = new ConditionalFact("medium", "role-play exercises", true);
+		
+		newR = new Rule(consequents, antecedent, "AND");
+		
+		knowledgeBase.add(newR);
+		
+	
+		
+		
+		
+		
+		
+		
+	}
+	
+	public ArrayList<Rule> getKnowledgeBase(){
+		return knowledgeBase;
+	}
+}

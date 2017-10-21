@@ -1,0 +1,17 @@
+package bayesianExpertSystem;
+
+// conditional fact is a version of fact which is used to make up rules
+// these facts are not known, but are tested against the database to evaluate rules
+// contains a fact name and a value (from superclass), and also a relationship between them (IS or IS NOT)
+public class ConditionalFact extends Fact {
+
+	// should be initiated with a name, value and relationship
+	ConditionalFact(String factName, String value){
+		
+		super(factName);
+		super.setValue(value);
+		
+	}
+	
+	
+}

@@ -1,0 +1,75 @@
+package demoExpertSystem;
+
+import java.util.ArrayList;
+
+public class Fact {
+
+	private String name;
+	private String value = null;
+	
+	// constructor
+	// fact should be initialized with a name
+	public Fact(String factName){
+		
+		name = factName;
+		
+	}
+	
+	// returns name of the field the fact represents
+	public String getName(){
+		return name;
+	}
+	
+	
+	
+	
+	//set new value
+	// super class version will always return true
+	public boolean setValue(String newValue){
+		
+		value = newValue;
+		
+		return true;
+	}
+	
+	// returns the value of this fact as a string
+	public String getValue(){
+		
+		return value;
+	}
+}
+
+public class DatabaseFact extends Fact {
+	
+	private ArrayList<String> permittedValues;
+	private boolean known = false;
+	
+	// constructor
+	// fact should be initialized with a list of values
+	public DatabaseFact(String factName, ArrayList<String> values){
+		
+		super(factName);
+		permittedValues = values;
+	}
+	
+	//returns true if the fact is known
+	public boolean isKnown(){
+		return known;
+	}
+	
+	// attempt to set a value
+	// return true if newValue is found in arrayList of possible values, and set known to true
+	public boolean setValue(String newValue){
+		
+		for (int i = 0; i < permittedValues.size(); i++){
+			
+			if (newValue.equals(permittedValues.get(i))){
+				super.setValue(newValue);
+				known = true;
+				return true;
+			}
+		}
+		
+		return false;
+	}
+}

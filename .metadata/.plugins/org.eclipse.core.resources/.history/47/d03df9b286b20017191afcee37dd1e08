@@ -1,0 +1,78 @@
+package bayesianExpertSystem;
+
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class BayesianExpertSystemManager {
+	
+	private static ArrayList<DatabaseFact> database = new ArrayList<DatabaseFact>();
+	private static ArrayList<Rule> knowledgeBase = new ArrayList<Rule>();
+	
+	//private static int NO_QUESTIONS = 4;
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		
+		
+		// fill facts and rules
+		FactFiller f = new FactFiller();
+		RuleFiller kb = new RuleFiller();
+
+		database = f.getFacts();
+		knowledgeBase = kb.getKnowledgeBase();
+		
+		
+		for (int i = 0; i < database.size(); i++){
+			System.out.println("Answer received: " + qAndA(i));
+		}
+		
+		
+		
+		
+	}
+	
+	// build question text according to index - if index is out of range, return escape string
+	// ask question
+	// check answer is a valid answer - if not repeat question
+	// return string
+	private static String qAndA(int factDatabaseIndex){
+		
+		String qText;
+		
+		
+		if (factDatabaseIndex < database.size()){
+			
+
+			ArrayList<String> possVals = database.get(factDatabaseIndex).getPossValues();
+			qText = "What is the " + database.get(factDatabaseIndex).getName() + " today (";
+			
+			for (int i = 0; i < possVals.size(); i++){
+				qText += possVals.get(i);
+				if(i < possVals.size() - 1)
+					qText += "/";
+			}
+			
+			qText += "):";
+			
+		}
+		else 
+			return "Q";
+		
+		//ask question
+		System.out.println(qText);
+		Scanner inScan = new Scanner(System.in);
+		String ansText = inScan.nextLine();
+		
+		//compare answer to possible fact values
+		while (!database.get(factDatabaseIndex).setValue(ansText)){
+			System.out.println("Invalid valid for this field. Please try again.");
+			System.out.println(qText);
+			ansText = inScan.nextLine();
+		}
+		
+		return ansText;
+		
+		
+	}
+
+}

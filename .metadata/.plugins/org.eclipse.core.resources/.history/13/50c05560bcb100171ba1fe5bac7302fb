@@ -1,0 +1,412 @@
+package demoExpertSystem;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
+
+public class ExpertSystemManager {
+	
+	private static ArrayList<DatabaseFact> database = new ArrayList<DatabaseFact>();
+	private static ArrayList<Rule> knowledgeBase = new ArrayList<Rule>();
+
+	public static void main(String[] args) {
+
+		FactFiller f = new FactFiller();
+		database = f.getFacts();
+		
+		RuleFiller kb = new RuleFiller();
+		knowledgeBase = kb.getKnowledgeBase();
+		
+		
+		//getUserInput();
+		autoUserInput();
+		//testFacts();
+		
+		while (true){
+			
+			String target = getTargetFact();
+
+			if (evaluateFact(target)){
+				
+				int resultFactIndex = findFactIndex(target);
+				String result = database.get(resultFactIndex).getValue();
+				
+				System.out.println(target + " : " + result);
+			}
+			else 
+			{
+				System.out.println("Error in main() - " + target + " could not be evaluated");
+			}
+		}
+		
+
+		
+		
+		//testFacts();
+		
+		
+	}
+	
+	// check fact exists in database
+	//check if fact is already known in database
+	//IF it is return true
+	//ELSE, identify rules which have target fact as a consequent -  make a 2D array of [rule index][unevaluated antecedents]
+	//	IF there are no rules with target as a consequent - then print error/ask user for more info
+	//	ELSE 
+	//		(FOR) cycle through rules in order of priority (lowest number of unknown antecedents first) attempting to evaluate rules
+	//			IF a rule can be evaluated, the target fact will be known. call this function again and return answer (which should be true)
+	//		(IF no rules can be evaluated - implicit if this point is reached)
+	//		FOR the rule with the highest priority (but a value above 0) use this function to attempt to evaluate remaining antecedents
+	//			IF antecedents can be evaluated, then this rule can be evaluated. Evaluate rule and call this function to ensure fact is known and found
+	private static boolean evaluateFact(String factToEvaluate){
+		
+		//test
+		System.out.println("\nevaluateFact() called for " + factToEvaluate);
+		
+		int factIndex = findFactIndex(factToEvaluate);
+
+		//check fact exists in database
+		if(factIndex == -1){
+			System.out.println("Target: " + factToEvaluate + " not a valid fact");
+			return false;
+		}
+		
+		DatabaseFact fact = database.get(factIndex);
+		
+		//base case
+		if (fact.isKnown())
+			return true;
+		
+		// recursive case
+		else {
+			//identify rules which have target fact as a consequent -  make a 2D array of [rule indexes][num of unevaluated antecedents]
+			List<List<Integer>> rulesToEval = new ArrayList<List<Integer>>();
+			int ruleIndex;
+			int rulePriority;
+			
+			for (int i = 0; i < knowledgeBase.size(); i++){
+				
+				Rule rule = knowledgeBase.get(i);
+				
+				// if rule to find that fact is found....
+				String ruleConsequent = rule.getConsequent().getName();
+				
+				if (ruleConsequent.equals(factToEvaluate)){
+					
+					//determine rule index
+					ruleIndex = i;
+					rulePriority = 0;
+					
+					//determine how many unknown antecedents that rule has (rule priority)
+					ArrayList<ConditionalFact> antecedents = rule.getAntecedents();
+					for (int j = 0; j < antecedents.size(); j++){
+						
+						int factTestIndex = findFactIndex(antecedents.get(j).getName());
+						
+						//error guard against invalid fact name
+						if (factTestIndex == -1){
+							System.out.println("Invalid Fact Name in evaluateFact() - recursive case");
+							return false;
+						}
+						
+						// if fact is not known...
+						if (!database.get(factTestIndex).isKnown()){
+							
+							//check that it is not a duplicate antecedent that has been already counted
+							boolean duplicate = false;
+							for (int k = (j - 1); k >= 0 && !duplicate; k--){
+								int prevTestedFactIndex = findFactIndex(antecedents.get(k).getName());
+								if (factTestIndex == prevTestedFactIndex){
+									duplicate = true;
+								}
+							}
+							
+							//only increase priority if antecedent is not a duplicate
+							if (!duplicate)
+								rulePriority++;
+				
+						}
+							
+					}
+					
+					// add an item to list with rule index and priority
+					// cycle through array to find position to place this rule
+					int pos = 0;
+					while (pos < rulesToEval.size()
+							&& rulesToEval.get(pos).get(1) < rulePriority)
+						pos++;
+					
+				
+					rulesToEval.add(pos, Arrays.asList(ruleIndex, rulePriority));
+				}
+			}
+			
+			// if no rules are found with that fact as a consequent, print error and return false
+			if(rulesToEval.size() == 0){
+				System.out.println("Error in evaluateFact() - no rules are found to evaluate the fact: " + factToEvaluate);
+				return false;
+			}
+			
+			// cycle through rules in order of priority (lowest number of unknown antecedents first) attempting to evaluate rules
+			// if the end of the list is reached without finding an answer, cycle through again (maximum number of cycles determined by breakout 'switch' count
+			else {
+				
+				//TODO test
+				System.out.println(rulesToEval.size() + " rules found that evaluate " + factToEvaluate);
+				
+				int MAX_BREAKOUT_CYCLES = 5;
+				int breakoutCount = 0;
+				
+				for (int j = 0; j < rulesToEval.size() && breakoutCount < MAX_BREAKOUT_CYCLES; j++){
+					
+					//test
+					System.out.println("Rule " + rulesToEval.get(j).get(0) + ", unknown antecedents: " + rulesToEval.get(j).get(1));
+					
+					// for rules with no unknown antecedents, try to evaluate rule
+					if (rulesToEval.get(j).get(1) == 0){
+						boolean success = evaluateByRule(rulesToEval.get(j).get(0));
+						
+						// if successful, target fact is now in the database, call this function again to confirm
+						if (success){
+							return evaluateFact(factToEvaluate);
+						}
+					}
+					// for rules with unknown antecedents
+					else {
+						
+						// cycle through antecedents, calling this function on each of them
+						// if all can be evaluated, try to evaluate rule
+						
+						Rule rule = knowledgeBase.get(rulesToEval.get(j).get(0));
+						ArrayList<ConditionalFact> antecedents = rule.getAntecedents();
+						boolean allAntecedentsKnown = true;
+						for (int k = 0; k < antecedents.size(); k++){
+							
+							if (evaluateFact(antecedents.get(k).getName()) == false)
+								allAntecedentsKnown = false;
+							
+						}
+						
+						// if all can be evaluated, try to evaluate rule
+						if (allAntecedentsKnown) 
+							return evaluateFact(factToEvaluate);
+						
+						
+					}
+					
+					// if the end of the list is reached without finding an answer, cycle through again
+					j = 0;
+					breakoutCount++;
+				}
+				
+				// if loop is broken out of, report failure and return false
+				System.out.println("Error in evaluateFact() - " + factToEvaluate + " could not be found after rule evaluation cycles");
+				return false;
+				
+			}
+			
+		}
+		
+	}
+	
+	// determine logic type of rule
+	// IF "OR"
+	//	cycle through antecedents and set result to true if any of them match the database facts.
+	// ELSE IF "AND"
+	//	cycle through antecedents and set result to false if any of them DONT match the database facts
+	// IF result is true
+	//	 update database rule with consequent.
+	
+	private static boolean evaluateByRule(int ruleIndex) {
+		
+		Rule r = knowledgeBase.get(ruleIndex);
+		ArrayList<ConditionalFact> ants = r.getAntecedents();
+		
+		boolean result;
+		
+		if (r.getLogicType().equals("OR")) {
+			result = false;
+			
+			for (int i = 0; i < ants.size() && !result; i++){
+				
+				String antValue = ants.get(i).getValue();
+				String knownFactValue = database.get(findFactIndex(ants.get(i).getName())).getValue();
+				
+				if (antValue.equals(knownFactValue)){
+					result = true;
+				}
+			}
+		}
+		
+		else if (r.getLogicType().equals("AND")){
+			
+			result = true;
+			
+			for (int i = 0; i < ants.size() && result; i++){
+				
+				String antValue = ants.get(i).getValue();
+				String knownFactValue = database.get(findFactIndex(ants.get(i).getName())).getValue();
+				
+				if (!antValue.equals(knownFactValue)){
+					result = false;
+				}
+			}
+		}
+		else {
+			System.out.println("Error in evaluateByRule() - unknown logic type");
+			return false;
+		}
+		
+		// if rule can be used to evaluate 
+		if (result){
+			
+			String consequentName = r.getConsequent().getName();
+			
+			return database.get(findFactIndex(consequentName)).updateFactWith(r.getConsequent());
+		}
+		else
+			return false;
+		
+	}
+	
+	// asks user questions about certain facts and places the answer in database using qAndA()
+	//extn : evaluate rules as facts are updated and print?? depends on evaluation system
+	private static void getUserInput() {
+		
+		while (!qAndA("What sort of environment is a trainee dealing with on the job?", "environment"))
+			System.out.println("Invalid answer - please try again");
+		
+		while (!qAndA("In what way is a trainee expected to act or respond on the job?", "job"))
+			System.out.println("Invalid answer - please try again");
+		
+		while(!qAndA("Is feedback on the trainee's progress required during training?", "feedback"))
+			System.out.println("Invalid answer - please try again");
+			
+	}
+	private static void autoUserInput(){
+		
+		int factIndex;
+		
+		ConditionalFact cf = new ConditionalFact("environment", "machines", true);
+		factIndex = findFactIndex("environment");
+		database.get(factIndex).updateFactWith(cf);
+		
+		cf = new ConditionalFact("job", "repairing", true);
+		factIndex = findFactIndex("job");
+		database.get(factIndex).updateFactWith(cf);
+		
+		cf = new ConditionalFact("feedback", "required", true);
+		factIndex = findFactIndex("feedback");
+		database.get(factIndex).updateFactWith(cf);
+		
+		
+		
+		
+	}
+	
+	// retrieves a string name of the fact that the user wants to find
+	// TODO consider returning index value of fact
+	private static String getTargetFact(){
+		
+		Scanner inScan = new Scanner(System.in);
+		String inString;
+		
+		System.out.println("Which fact do you seek? \n");
+		inString = inScan.nextLine();
+		
+		//check fact name exists in database
+		while (findFactIndex(inString) == -1){
+			
+			System.out.println("Invalid fact name - please try again.");
+			System.out.println("Which fact do you seek?\n");
+			inString = inScan.nextLine();
+		}
+		
+		
+		return inString;
+	}
+	
+	// asks a question using the given question text
+	//gets string response from user
+	//creates conditional fact with name and value (and automatic positive relationship)
+	//finds fact in database with same name
+	//updates that fact
+	// returns true when fact is updated
+	private static boolean qAndA(String questionText, String factName){
+		
+		Scanner inScan = new Scanner(System.in);
+		
+		System.out.println(questionText);
+		String answer = inScan.nextLine();
+		
+		//create new temp fact
+		ConditionalFact cf = new ConditionalFact(factName, answer, true);
+		
+		//find corresponding database fact
+		int index = findFactIndex(factName);
+		
+		// update fact and return true if it is successful, false otherwise
+		return database.get(index).updateFactWith(cf);
+		
+	}
+	
+	// given a string which should be the name of a fact in the database
+	// searches through database to find index of the fact with given name
+	// returns index found
+	// returns -1 if not found
+	private static int findFactIndex(String factNameToSearch) {
+		
+		for (int i = 0; i < database.size(); i++){
+			
+			if(database.get(i).getName().equals(factNameToSearch))
+				return i;
+		}
+		
+		//if match not found, return -1
+		return -1;
+	}
+	private static void testFindFactIndex(String testString){
+		
+		System.out.println("index of " + testString + " is " + findFactIndex(testString));
+	}
+	
+	private static void printFact(int index){
+		
+		System.out.println("fact name = " + database.get(index).getName());
+		System.out.println("fact known? = " + database.get(index).isKnown());
+		
+		if (database.get(index).isKnown())
+			System.out.println("value = " + database.get(index).getValue());
+		
+		System.out.println("");
+		
+		//Scanner inScan = new Scanner(System.in);
+		
+		
+		
+		/*while(true) {
+			
+			System.out.print("\nWhat is the value of \"" + database.get(index).getName() + "\" ");
+			String newFactVal = inScan.nextLine();
+			System.out.println("Value entered is: " + newFactVal);
+			
+			if (database.get(index).setValue(newFactVal))
+				System.out.println("Success! value of " + database.get(index).getName() + " set to: " + database.get(index).getValue());
+			
+			else 
+				System.out.println("Error! invalid value entered.");
+		}*/
+	}
+	
+	private static void testFacts(){
+		
+		for (int i = 0; i < database.size(); i++) {
+			
+			printFact(i);
+		}
+	}
+
+}
+
+

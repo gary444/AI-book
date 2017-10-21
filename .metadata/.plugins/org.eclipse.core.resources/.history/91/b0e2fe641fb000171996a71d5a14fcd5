@@ -1,0 +1,183 @@
+package demoExpertSystem;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class ExpertSystemManager {
+	
+	private static ArrayList<DatabaseFact> database = new ArrayList<DatabaseFact>();
+	private static ArrayList<Rule> knowledgeBase = new ArrayList<Rule>();
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+		populateDatabase();
+		populateKnowledgeBase();
+		
+		//testFact(0);
+		//testRule(0);
+		
+		String tst = "environment";
+		System.out.println("index of " + tst + " is " + findFactIndex(tst));
+		
+		
+	}
+	
+	// asks user questions about certain facts and places the answer in database using qAndA()
+	//extn : evaluate rules as facts are updated and print?? depends on evaluation system
+	private static void getUserInput() {
+		
+		
+	}
+	
+	// asks a question using the given question text
+	//gets string response from user
+	//creates conditional rule with name and value (and automatic positive relationship)
+	//finds fact in database with same name
+	//updates that fact
+	// returns true when fact is updated
+	private static boolean qAndA(String questionText, String factName){
+		
+		//TODO
+		return true;
+	}
+	
+	// given a string which should be the name of a fact in the database
+	// searches through database to find index of the fact with given name
+	// returns index found
+	// returns -1 if not found
+	private static int findFactIndex(String factNameToSearch) {
+		
+		for (int i = 0; i < database.size(); i++){
+			
+			if(database.get(i).getName().equals(factNameToSearch))
+				return i;
+		}
+		
+		//if match not found, return -1
+		return -1;
+	}
+
+	// create a list of facts with their 'allowed values'
+	// all string values are lower case!!!!!!!!!!
+	private static void populateDatabase(){
+		
+		DatabaseFact newF;
+		
+		
+		newF = new DatabaseFact("environment", new ArrayList<String>(Arrays.asList("papers"
+																			,"manuals", 
+																			"documents",
+																			"textbooks", 
+																			"pictures", 
+																			"illustrations", 
+																			"photographs", 
+																			"diagrams", 
+																			"machines", 
+																			"buildings",
+																			"tools",
+																			"numbers",
+																			"formulas",
+																			"computer programs")));
+		database.add(newF);
+		
+		
+	}
+	
+	// create a list of rules, all with antecedents, consequents and logic types
+	private static void populateKnowledgeBase(){
+		
+		Rule newR;
+		
+		// create consequent list
+		ArrayList<ConditionalFact> consequents = new ArrayList<ConditionalFact>();
+		ConditionalFact cf = new ConditionalFact("environment", "papers", true);
+		consequents.add(cf);
+		cf = new ConditionalFact("environment", "manuals", true);
+		consequents.add(cf);
+		cf = new ConditionalFact("environment", "documents", true);
+		consequents.add(cf);
+		cf = new ConditionalFact("environment", "textbooks", true);
+		consequents.add(cf);
+		
+		//create antecedent
+		ConditionalFact antecedent = new ConditionalFact("stimulus_situation", "verbal", true);
+		
+		newR = new Rule(consequents, antecedent, "OR");
+		
+		knowledgeBase.add(newR);
+		
+		
+	}
+	
+	private static void testFact(int index) {
+		
+				System.out.println("fact name = " + database.get(index).getName());
+				System.out.println("fact known? = " + database.get(index).isKnown());
+				
+				Scanner inScan = new Scanner(System.in);
+				
+				
+				
+				while(true) {
+					
+					System.out.print("\nWhat is the value of \"" + database.get(index).getName() + "\" ");
+					String newFactVal = inScan.nextLine();
+					System.out.println("Value entered is: " + newFactVal);
+					
+					if (database.get(index).setValue(newFactVal))
+						System.out.println("Success! value of " + database.get(index).getName() + " set to: " + database.get(index).getValue());
+					
+					else 
+						System.out.println("Error! invalid value entered.");
+				}
+				
+	}
+	
+	private static void testRule(int index) {
+		
+		Rule testRule = knowledgeBase.get(index);
+		
+		ArrayList<ConditionalFact> ants = testRule.getAntecedents();
+		ConditionalFact con = testRule.getConsequent();
+		String logicType = testRule.getLogicType();
+		
+		// print antecedents
+		
+		System.out.println("Antecedents:\n");
+		
+		for (int i = 0; i < ants.size(); i++){
+			
+			System.out.print("Antecedent " + (i + 1) + ": ");
+			System.out.print("IF " + ants.get(i).getName());
+			
+			if (ants.get(i).isRelationshipPositive())
+				System.out.print(" IS ");
+			else
+				System.out.print(" IS NOT ");
+			
+			System.out.print(ants.get(i).getValue());
+			
+			if (i < (ants.size() - 1))
+				System.out.print(" " + logicType);
+			
+			System.out.println("");
+		}
+		
+		// print consequent
+		
+		System.out.print("\nConsequent:\n\nTHEN " + con.getName());
+		
+		if (con.isRelationshipPositive())
+			System.out.print(" IS ");
+		else
+			System.out.print(" IS NOT ");
+		
+		System.out.print(con.getValue() + "\n\n");
+		
+		
+	}
+}
+
+

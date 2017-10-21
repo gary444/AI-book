@@ -1,0 +1,336 @@
+package bayesianExpertSystem;
+
+import java.util.ArrayList;
+
+public class RuleFiller {
+	
+	private static ArrayList<Rule> knowledgeBase = new ArrayList<Rule>();
+
+	public RuleFiller(){
+		populateKnowledgeBase();
+		
+		
+	}
+	
+	/*
+	
+	private static void testRules() {
+		
+		for(int j = 0; j < knowledgeBase.size(); j++) {
+			
+			printRule(j);
+		}
+	}
+	
+	private static void printRule(int index) {
+		
+		Rule testRule;
+		ArrayList<Fact> ants;
+		Fact con;
+		String logicType;
+		
+		testRule = knowledgeBase.get(index);
+		
+		ants = testRule.getAntecedents();
+		con = testRule.getConsequent();
+		logicType = testRule.getLogicType();
+		
+		// print antecedents
+		
+		System.out.println("Antecedents:\n");
+		
+		for (int i = 0; i < ants.size(); i++){
+			
+			System.out.print("Antecedent " + (i + 1) + ": ");
+			System.out.print("IF " + ants.get(i).getName());
+			
+			if (ants.get(i).isRelationshipPositive())
+				System.out.print(" IS ");
+			else
+				System.out.print(" IS NOT ");
+			
+			System.out.print(ants.get(i).getValue());
+			
+			if (i < (ants.size() - 1))
+				System.out.print(" " + logicType);
+			
+			System.out.println("");
+		}
+		
+		// print consequent
+		
+		System.out.print("\nConsequent:\n\nTHEN " + con.getName());
+		
+		if (con.isRelationshipPositive())
+			System.out.print(" IS ");
+		else
+			System.out.print(" IS NOT ");
+		
+		System.out.print(con.getValue() + "\n\n");
+		
+	}
+	
+	*/
+	
+	// create a list of rules, all with antecedents, consequents and logic types
+	private static void populateKnowledgeBase(){
+		
+		Rule newR;
+		
+		
+		// RULE 1
+		// create consequent list
+		ArrayList<Fact> antecedents = new ArrayList<Fact>();
+		Fact cf = new Fact("weather today", "rain");
+		antecedents.add(cf);
+		cf = new Fact("environment", "manuals");
+		antecedents.add(cf);
+		cf = new Fact("environment", "documents");
+		antecedents.add(cf);
+		cf = new Fact("environment", "textbooks");
+		antecedents.add(cf);
+		
+		//create antecedent
+		Fact consequent = new Fact("stimulus_situation", "verbal");
+		
+		newR = new Rule(antecedents, consequent, "OR");
+		
+		knowledgeBase.add(newR);
+		
+		// RULE 2
+		// create consequent list
+		antecedents = new ArrayList<Fact>();
+		cf = new Fact("environment", "pictures");
+		antecedents.add(cf);
+		cf = new Fact("environment", "illustrations");
+		antecedents.add(cf);
+		cf = new Fact("environment", "photographs");
+		antecedents.add(cf);
+		cf = new Fact("environment", "diagrams");
+		antecedents.add(cf);
+		
+		//create antecedent
+		consequent = new Fact("stimulus_situation", "visual");
+		
+		newR = new Rule(antecedents, consequent, "OR");
+		
+		knowledgeBase.add(newR);
+		
+		// RULE 3
+		// create consequent list
+		antecedents = new ArrayList<Fact>();
+		cf = new Fact("environment", "machines");
+		antecedents.add(cf);
+		cf = new Fact("environment", "buildings");
+		antecedents.add(cf);
+		cf = new Fact("environment", "tools");
+		antecedents.add(cf);
+		
+		//create antecedent
+		consequent = new Fact("stimulus_situation", "physical object");
+		
+		newR = new Rule(antecedents, consequent, "OR");
+		
+		knowledgeBase.add(newR);
+		
+		// RULE 4
+		// create consequent list
+		antecedents = new ArrayList<Fact>();
+		cf = new Fact("environment", "numbers");
+		antecedents.add(cf);
+		cf = new Fact("environment", "formulas");
+		antecedents.add(cf);
+		cf = new Fact("environment", "computer programs");
+		antecedents.add(cf);
+		
+		//create antecedent
+		consequent = new Fact("stimulus_situation", "symbolic");
+		
+		newR = new Rule(antecedents, consequent, "OR");
+		
+		knowledgeBase.add(newR);
+		
+		// RULE 5
+		// create consequent list
+		antecedents = new ArrayList<Fact>();
+		cf = new Fact("job", "lecturing");
+		antecedents.add(cf);
+		cf = new Fact("job", "advising");
+		antecedents.add(cf);
+		cf = new Fact("job", "counselling");
+		antecedents.add(cf);
+		
+		//create antecedent
+		consequent = new Fact("stimulus_response", "oral");
+		
+		newR = new Rule(antecedents, consequent, "OR");
+		
+		knowledgeBase.add(newR);
+		
+		// RULE 6
+		// create consequent list
+		antecedents = new ArrayList<Fact>();
+		cf = new Fact("job", "building");
+		antecedents.add(cf);
+		cf = new Fact("job", "repairing");
+		antecedents.add(cf);
+		cf = new Fact("job", "troubleshooting");
+		antecedents.add(cf);
+		
+		//create antecedent
+		consequent = new Fact("stimulus_response", "hands-on");
+		
+		newR = new Rule(antecedents, consequent, "OR");
+		
+		knowledgeBase.add(newR);
+		
+		// RULE 7
+		// create consequent list
+		antecedents = new ArrayList<Fact>();
+		cf = new Fact("job", "writing");
+		antecedents.add(cf);
+		cf = new Fact("job", "typing");
+		antecedents.add(cf);
+		cf = new Fact("job", "drawing");
+		antecedents.add(cf);
+		
+		//create antecedent
+		consequent = new Fact("stimulus_response", "documented");
+		
+		newR = new Rule(antecedents, consequent, "OR");
+		
+		knowledgeBase.add(newR);
+		
+		// RULE 8
+		// create consequent list
+		antecedents = new ArrayList<Fact>();
+		cf = new Fact("job", "evaluating");
+		antecedents.add(cf);
+		cf = new Fact("job", "reasoning");
+		antecedents.add(cf);
+		cf = new Fact("job", "investigating");
+		antecedents.add(cf);
+		
+		//create antecedent
+		consequent = new Fact("stimulus_response", "analytical");
+		
+		newR = new Rule(antecedents, consequent, "OR");
+		
+		knowledgeBase.add(newR);
+		
+		// RULE 9
+		// create consequent list
+		antecedents = new ArrayList<Fact>();
+		cf = new Fact("stimulus_situation", "physical object");
+		antecedents.add(cf);
+		cf = new Fact("stimulus_response", "hands-on");
+		antecedents.add(cf);
+		cf = new Fact("feedback", "required");
+		antecedents.add(cf);
+		
+		//create antecedent
+		consequent = new Fact("medium", "workshop");
+		
+		newR = new Rule(antecedents, consequent, "AND");
+		
+		knowledgeBase.add(newR);
+		
+		// RULE 10
+		// create consequent list
+		antecedents = new ArrayList<Fact>();
+		cf = new Fact("stimulus_situation", "symbolic");
+		antecedents.add(cf);
+		cf = new Fact("stimulus_response", "analytical");
+		antecedents.add(cf);
+		cf = new Fact("feedback", "required");
+		antecedents.add(cf);
+		
+		//create antecedent
+		consequent = new Fact("medium", "lecture - tutorial");
+		
+		newR = new Rule(antecedents, consequent, "AND");
+		
+		knowledgeBase.add(newR);
+		
+		// RULE 11
+		// create consequent list
+		antecedents = new ArrayList<Fact>();
+		cf = new Fact("stimulus_situation", "visual");
+		antecedents.add(cf);
+		cf = new Fact("stimulus_response", "documented");
+		antecedents.add(cf);
+		cf = new Fact("feedback", "not required");
+		antecedents.add(cf);
+		
+		//create antecedent
+		consequent = new Fact("medium", "videocassette");
+		
+		newR = new Rule(antecedents, consequent, "AND");
+		
+		knowledgeBase.add(newR);
+		
+		// RULE 12
+		// create consequent list
+		antecedents = new ArrayList<Fact>();
+		cf = new Fact("stimulus_situation", "visual");
+		antecedents.add(cf);
+		cf = new Fact("stimulus_response", "oral");
+		antecedents.add(cf);
+		cf = new Fact("feedback", "required");
+		antecedents.add(cf);
+		
+		//create antecedent
+		consequent = new Fact("medium", "lecture - tutorial");
+		
+		newR = new Rule(antecedents, consequent, "AND");
+		
+		knowledgeBase.add(newR);
+		
+		
+		// RULE 13
+		// create consequent list
+		antecedents = new ArrayList<Fact>();
+		cf = new Fact("stimulus_situation", "verbal");
+		antecedents.add(cf);
+		cf = new Fact("stimulus_response", "analytical");
+		antecedents.add(cf);
+		cf = new Fact("feedback", "required");
+		antecedents.add(cf);
+		
+		//create antecedent
+		consequent = new Fact("medium", "lecture - tutorial");
+		
+		newR = new Rule(antecedents, consequent, "AND");
+		
+		knowledgeBase.add(newR);
+		
+		// RULE 14
+		// create consequent list
+		antecedents = new ArrayList<Fact>();
+		cf = new Fact("stimulus_situation", "verbal");
+		antecedents.add(cf);
+		cf = new Fact("stimulus_response", "oral");
+		antecedents.add(cf);
+		cf = new Fact("feedback", "required");
+		antecedents.add(cf);
+		
+		//create antecedent
+		consequent = new Fact("medium", "role-play exercises");
+		
+		newR = new Rule(antecedents, consequent, "AND");
+		
+		knowledgeBase.add(newR);
+		
+	
+		
+		
+		
+		
+		
+		
+	}
+	
+	public ArrayList<Rule> getKnowledgeBase(){
+		return knowledgeBase;
+	}
+}

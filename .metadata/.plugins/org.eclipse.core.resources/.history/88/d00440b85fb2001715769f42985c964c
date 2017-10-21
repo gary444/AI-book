@@ -1,0 +1,9 @@
+package bayesianExpertSystem;
+
+public class TargetFact extends Fact {
+
+	public TargetFact(String factName){
+		
+		super(factName);
+	}
+}
