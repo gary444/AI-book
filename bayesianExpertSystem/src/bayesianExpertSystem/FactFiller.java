@@ -40,24 +40,27 @@ public class FactFiller {
 	private static void populateDatabase(){
 				
 		DatabaseFact newF;
-				
+
+		newF = new DatabaseFact("weather", new ArrayList<String>(Arrays.asList("rain",
+				"dry")));
+		database.add(newF);
+
+
+		newF = new DatabaseFact("rainfall", new ArrayList<String>(Arrays.asList("low",
+				"high")));
+		database.add(newF);
 	
 		newF = new DatabaseFact("temperature", new ArrayList<String>(Arrays.asList("warm",
 																					"cold")));
 		database.add(newF);
 		
-		
-		newF = new DatabaseFact("rainfall", new ArrayList<String>(Arrays.asList("low",
-				"high")));
-		database.add(newF);
+
 		
 		newF = new DatabaseFact("cloud cover", new ArrayList<String>(Arrays.asList("overcast",
 				"clear")));
 		database.add(newF);
 		
-		newF = new DatabaseFact("weather", new ArrayList<String>(Arrays.asList("rain",
-				"dry")));
-		database.add(newF);
+
 				
 	}
 	

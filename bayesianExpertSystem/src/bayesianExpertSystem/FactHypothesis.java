@@ -15,6 +15,7 @@ public class FactHypothesis {
 	public boolean setProbability(double newProbability){
 		if (newProbability > 0.0 && newProbability < 1.0){
 			probability = newProbability;
+//			System.out.println("probability set");
 			return true;
 		}
 		else 

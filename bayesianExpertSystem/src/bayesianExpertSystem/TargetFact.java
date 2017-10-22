@@ -14,7 +14,7 @@ public class TargetFact extends Fact {
 	
 	// returns a hypothesis of given name
 	// if not found, return null
-	public FactHypothesis getHypotheses(String hypName){
+	public FactHypothesis getHypothesis(String hypName){
 		
 		for (int i = 0; i < hypotheses.size(); i++){
 			
@@ -24,5 +24,9 @@ public class TargetFact extends Fact {
 		}
 		
 		return null;
+	}
+
+	public ArrayList<FactHypothesis> getHypotheses() {
+		return hypotheses;
 	}
 }

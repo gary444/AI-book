@@ -46,5 +46,7 @@ public class Rule {
 	public double getLN(){return LN;}
 	
 	public boolean isEvaluated(){return evaluated;}
+
+	public void setEvaluated(){evaluated = true; }
 	
 }

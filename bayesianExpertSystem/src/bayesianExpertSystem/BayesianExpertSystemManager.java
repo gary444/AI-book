@@ -8,35 +8,95 @@ public class BayesianExpertSystemManager {
 	
 	private static ArrayList<DatabaseFact> database = new ArrayList<DatabaseFact>();
 	private static ArrayList<Rule> knowledgeBase = new ArrayList<Rule>();
-	private static TargetFact targetFact;
+	private static TargetFact targetFact  = null;
 	
 	//private static int NO_QUESTIONS = 4;
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		
 		
 		// fill facts and rules
 		FactFiller f = new FactFiller();
 		RuleFiller kb = new RuleFiller();
 		TargetFactFiller tff = new TargetFactFiller();
-
 		database = f.getFacts();
 		knowledgeBase = kb.getKnowledgeBase();
 		targetFact = tff.getTargetFact();
+
+
 		
 		System.out.println("Target Fact is " + targetFact.getName());
-		
-		
+
+
 		for (int i = 0; i < database.size(); i++){
 			System.out.println("Answer received: " + qAndA(i));
+			updateTargetProbabilities();
+			printTargetHypotheses();
 		}
+
+//		ArrayList<FactHypothesis> hyps1 = new ArrayList<>();
+//		FactHypothesis h1 = new FactHypothesis("rain", 0.1);
+//		hyps1.add(h1);
+//		FactHypothesis h2 = new FactHypothesis("dry", 0.2);
+//		hyps1.add(h2);
+//		FactHypothesis h3 = new FactHypothesis("rain", 0.3);
+//		hyps1.add(h3);
+//		FactHypothesis h4 = new FactHypothesis("dry", 0.5);
+//		hyps1.add(h4);
+//		FactHypothesis h5 = new FactHypothesis("rain", 0.8);
+//		hyps1.add(h5);
+//		FactHypothesis h6 = new FactHypothesis("dry", 0.9);
+//		hyps1.add(h6);
+//
+//		sortHypotheses(hyps1);
+//		for (int i = 0; i < hyps1.size(); i++){
+//
+//			System.out.println("Hypothesis " + (i + 1) + ": " + targetFact.getName() + " is " +
+//					hyps1.get(i).getName() + " : " + hyps1.get(i).getProbability());
+//		}
 		
 		
 		
-		
-		
-		
+	}
+
+	// get hypotheses of target fact
+	// print them in order (most likely first) with values
+	private static void printTargetHypotheses() {
+
+		ArrayList<FactHypothesis> hyps = targetFact.getHypotheses();
+		hyps = sortHypotheses(hyps);
+
+		System.out.println("\n=============================================");
+
+		for (int i = 0; i < hyps.size(); i++){
+
+			System.out.println("Hypothesis " + (i + 1) + ": " + targetFact.getName() + " is " +
+					hyps.get(i).getName() + " : " + hyps.get(i).getProbability());
+		}
+
+		System.out.println("=============================================\n");
+
+	}
+
+	// sorts an array of hypotheses
+	private static ArrayList<FactHypothesis> sortHypotheses(ArrayList<FactHypothesis> hyps){
+
+		FactHypothesis tempHyp;
+
+		for (int i = 0; i < hyps.size(); i++) {
+
+			for (int j = (i + 1); j < hyps.size(); j++) {
+
+				if (hyps.get(j).getProbability() > hyps.get(i).getProbability()){
+					tempHyp = hyps.get(j);
+					hyps.set(j, hyps.get(i));
+					hyps.set(i, tempHyp);
+				}
+			}
+		}
+
+		return hyps;
+
 	}
 	
 	// FOR cycle through rules
@@ -50,13 +110,14 @@ public class BayesianExpertSystemManager {
 		for (int i = 0; i < knowledgeBase.size(); i++){
 			
 			Rule rule = knowledgeBase.get(i);
+
 			// if rule is unevaluated
 			if (!rule.isEvaluated()){
 				
 				//count unknown antecedents
-				int noUnknownAntecedents = 0;
+				boolean noUnknownAntecedents = true;
 				ArrayList<Fact> antecedents = rule.getAntecedents();
-				for (int j = 0; j < antecedents.size() && noUnknownAntecedents == 0; j++){
+				for (int j = 0; j < antecedents.size() && noUnknownAntecedents; j++){
 					
 					String antName = antecedents.get(j).getName();
 					int factTestIndex = findFactIndex(antName);
@@ -64,50 +125,101 @@ public class BayesianExpertSystemManager {
 					// if fact is not known...
 					if (!database.get(factTestIndex).isKnown()){
 						
-						noUnknownAntecedents++;
+						noUnknownAntecedents = false;
 					}
 						
 				}
 				
 			 	//if rule is unevaluated and rule has 0 unknown antecedents
-				if (noUnknownAntecedents == 0){
+				if (noUnknownAntecedents){
 					
 			 		//update the hypotheses of the target fact using LS and LN values of that rule
 					
-					String consName = rule.getConsequent().getName();
+					String consVal = rule.getConsequent().getValue();
+
+					//test
+//					System.out.println("\ncons Name = " + consVal);
+
 					double factor;
-					double priorProbability = targetFact.getHypotheses(consName).getProbability();
+					double priorProbability = targetFact.getHypothesis(consVal).getProbability();
 					
 					
 					// evaluate rule to determine whether to use LN or LS
-					if (areRuleCondsMet(rule))
+					if (ruleCondsMet(rule))
 						factor = rule.getLS();
 					else
 						factor = rule.getLN();
 					
 					
-					targetFact.getHypotheses(consName).setProbability(updateProbability(priorProbability, factor));
+					targetFact.getHypothesis(consVal).setProbability(updateProbability(priorProbability, factor));
+
+					rule.setEvaluated();
 				}
 			}
 		}
-		
-		//TODO
+
 		return true;
 	}
-	
-	private static boolean areRuleCondsMet(Rule rule){
+
+
+	private static boolean ruleCondsMet(Rule rule){
+
+
+		ArrayList<Fact> ants = rule.getAntecedents();
+		boolean result = true;
+
+		// if OR rule, only needs one antecedent to be true for the result to be true
+		if (rule.getLogicType().equals("OR")) {
+			result = false;
+
+			for (int i = 0; i < ants.size() && !result; i++){
+
+				String antValue = ants.get(i).getValue();
+				String knownFactValue = database.get(findFactIndex(ants.get(i).getName())).getValue();
+
+				if (antValue.equals(knownFactValue)){
+					result = true;
+				}
+			}
+		}
+
+		// if AND rule, only needs one antecedent to be false for the result to be false
+		else if (rule.getLogicType().equals("AND")){
+
+			result = true;
+
+			for (int i = 0; i < ants.size() && result; i++){
+
+				String antValue = ants.get(i).getValue();
+				String knownFactValue = database.get(findFactIndex(ants.get(i).getName())).getValue();
+
+				if (!antValue.equals(knownFactValue)){
+					result = false;
+				}
+			}
+		}
+		else {
+			System.out.println("Error in evaluateByRule() - unknown logic type");
+		}
+
+
 		
-		// TODO evaluate rules to true or false - use some code from first expert system
-		
-		return true;
+		return result;
 	}
 	
 	private static double updateProbability(double priorProbability, double factor){
+
+//		System.out.println("Prior Probability = " + priorProbability + ", factor = " + factor);
+
+		double preOdds = priorProbability / (1.0 - priorProbability);
+
+		double postOdds = preOdds * factor;
 		
-		double postOdds = priorProbability * factor;
-		
-		double postProbability = postOdds / (1.0 - postOdds);
-		
+		double postProbability = postOdds / (1.0 + postOdds);
+
+
+//		System.out.println("Post probability = " + postProbability);
+
 		return postProbability;
 		
 	}
@@ -121,24 +233,21 @@ public class BayesianExpertSystemManager {
 		String qText;
 		
 		// check fact index is in range
-		if (factDatabaseIndex < database.size()
-				&& factDatabaseIndex <= 0){
-			
-			// build question with permitted values
-			ArrayList<String> possVals = database.get(factDatabaseIndex).getPossValues();
-			qText = "What is the " + database.get(factDatabaseIndex).getName() + " today (";
-			
-			for (int i = 0; i < possVals.size(); i++){
-				qText += possVals.get(i);
-				if(i < possVals.size() - 1)
-					qText += "/";
-			}
-			
-			qText += "):";
-			
-		}
-		else 
+		if (factDatabaseIndex >= database.size()
+				|| factDatabaseIndex < 0) {
 			return "Q";
+		}
+
+
+		// build question with permitted values
+		ArrayList<String> possVals = database.get(factDatabaseIndex).getPossValues();
+		qText = "What is the " + database.get(factDatabaseIndex).getName() + " today (";
+		for (int i = 0; i < possVals.size(); i++){
+			qText += possVals.get(i);
+			if(i < possVals.size() - 1)
+				qText += "/";
+		}
+		qText += "):";
 		
 		//ask question
 		System.out.println(qText);
@@ -167,7 +276,7 @@ public class BayesianExpertSystemManager {
 			if(database.get(i).getName().equals(factNameToSearch))
 				return i;
 		}
-		
+
 		//if match not found, return -1
 		return -1;
 	}

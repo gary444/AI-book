@@ -80,14 +80,15 @@ public class RuleFiller {
 		
 		// RULE 1
 		ArrayList<Fact> antecedents = new ArrayList<Fact>();
-		Fact cf = new Fact("weather today", "rain");
+		Fact cf = new Fact("weather", "rain");
+		antecedents.add(cf);
 		Fact consequent = new Fact("weather tomorrow", "rain");
-		newR = new Rule(antecedents, consequent, "OR", 2.5, 0.6);
+		newR = new Rule(antecedents, consequent, "AND", 2.5, 0.6);
 		knowledgeBase.add(newR);
 		
 		// RULE 2
 		antecedents = new ArrayList<Fact>();
-		cf = new Fact("weather today", "dry");
+		cf = new Fact("weather", "dry");
 		antecedents.add(cf);
 		consequent = new Fact("weather tomorrow", "dry");
 		newR = new Rule(antecedents, consequent, "OR", 1.6, 0.4);
@@ -95,7 +96,7 @@ public class RuleFiller {
 		
 		// RULE 3
 		antecedents = new ArrayList<Fact>();
-		cf = new Fact("weather today", "rain");
+		cf = new Fact("weather", "rain");
 		antecedents.add(cf);
 		cf = new Fact("rainfall", "low");
 		antecedents.add(cf);
@@ -105,7 +106,7 @@ public class RuleFiller {
 		
 		// RULE 4
 		antecedents = new ArrayList<Fact>();
-		cf = new Fact("weather today", "rain");
+		cf = new Fact("weather", "rain");
 		antecedents.add(cf);
 		cf = new Fact("rainfall", "low");
 		antecedents.add(cf);
@@ -117,7 +118,7 @@ public class RuleFiller {
 		
 		// RULE 5
 		antecedents = new ArrayList<Fact>();
-		cf = new Fact("weather today", "dry");
+		cf = new Fact("weather", "dry");
 		antecedents.add(cf);
 		cf = new Fact("temperature", "warm");
 		antecedents.add(cf);
@@ -127,7 +128,7 @@ public class RuleFiller {
 		
 		// RULE 6
 		antecedents = new ArrayList<Fact>();
-		cf = new Fact("weather today", "dry");
+		cf = new Fact("weather", "dry");
 		antecedents.add(cf);
 		cf = new Fact("temperature", "warm");
 		antecedents.add(cf);
